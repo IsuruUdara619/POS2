@@ -34,33 +34,32 @@ app.use((req, res, next) => {
 });
 
 // Configure CORS
-const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
-const corsOptions = {
-  origin: function(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Allow if explicitly listed or if wildcard is set
-    if (allowedOrigins.includes('*') || allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    
-    // Allow all Railway subdomains and localhost for convenience
-    if (origin.endsWith('.railway.app') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      return callback(null, true);
-    }
-    
-    console.log('⚠️ Blocked by CORS:', origin);
-    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-    return callback(new Error(msg), false);
-  },
+// simplified for debugging: allow all origins that ask (reflect origin)
+app.use(cors({
+  origin: true, 
   credentials: true
-};
+}));
 
-app.use(cors(corsOptions));
+// Enable pre-flight requests for all routes
+app.options('*', cors({
+  origin: true,
+  credentials: true
+}));
 
-// Enable pre-flight requests for all routes with the same options
-app.options('*', cors(corsOptions));
+// Manual CORS headers for extra safety (in case middleware fails/is bypassed)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(express.json());
 
