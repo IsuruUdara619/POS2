@@ -11,6 +11,7 @@ import Expenses from './pages/Expenses';
 import Reports from './pages/Reports';
 import Loyalty from './pages/Loyalty';
 import Settings from './pages/Settings';
+import { API_BASE_URL } from './config';
 
 function isAuthenticated() {
   return !!localStorage.getItem('token');
@@ -36,6 +37,11 @@ function Protected({ children, allowedRoles }: { children: JSX.Element; allowedR
 }
 
 export default function App() {
+  useEffect(() => {
+    console.log('App started');
+    console.log('API_BASE_URL:', API_BASE_URL);
+  }, []);
+
   const bg = '#edf8e9';
   return (
     <div style={{ background: bg, minHeight: '100vh', color: '#fff' }}>
