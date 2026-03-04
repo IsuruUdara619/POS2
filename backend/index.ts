@@ -35,8 +35,8 @@ app.use((req, res, next) => {
 
 // Configure CORS
 const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
-app.use(cors({
-  origin: function(origin, callback) {
+const corsOptions = {
+  origin: function(origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
@@ -51,18 +51,16 @@ app.use(cors({
     }
     
     console.log('⚠️ Blocked by CORS:', origin);
-    // For debugging, we might want to allow it anyway but log it. 
-    // Uncomment the next line to be permissive during debug
-    // return callback(null, true);
-    
     const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
     return callback(new Error(msg), false);
   },
   credentials: true
-}));
+};
 
-// Enable pre-flight requests for all routes
-app.options('*', cors());
+app.use(cors(corsOptions));
+
+// Enable pre-flight requests for all routes with the same options
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
