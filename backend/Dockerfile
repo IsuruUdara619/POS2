@@ -37,7 +37,7 @@ RUN npm ci && npm cache clean --force
 COPY . .
 
 # Expose port
-EXPOSE 5000
+EXPOSE 8080
 
 # Start the application
 CMD ["npm", "start"]
