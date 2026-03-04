@@ -25,7 +25,10 @@ import path from 'path';
 import fs from 'fs';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
+  credentials: true
+}));
 app.use(express.json());
 
 // Add request logging middleware
