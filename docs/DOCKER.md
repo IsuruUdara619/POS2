@@ -28,7 +28,7 @@ This guide explains how to run the Heaven Bakers application using Docker and Do
    ```
 
 4. **Access the application**
-   - Frontend: http://localhost
+   - Frontend: http://localhost:3000
    - Backend API: http://localhost:5000
    - PostgreSQL: localhost:5432
 
@@ -186,7 +186,7 @@ postgres://heaven_user:heaven_password@postgres:5432/Heaven_Bakers
 
 | Service | Container Port | Host Port |
 |---------|---------------|-----------|
-| Frontend | 80 | 80 |
+| Frontend | 3000 | 3000 |
 | Backend | 5000 | 5000 |
 | PostgreSQL | 5432 | 5432 |
 
@@ -256,9 +256,7 @@ For production:
    docker-compose --env-file .env.production up -d
    ```
 
-5. **Enable HTTPS** by configuring nginx or using a reverse proxy
-
-6. **Set up automatic backups** for the database
+5. **Set up automatic backups** for the database
 
 ## Troubleshooting
 

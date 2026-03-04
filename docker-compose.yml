@@ -32,7 +32,7 @@ services:
     container_name: heaven_bakers_frontend
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8080:3000"
     depends_on:
       - backend
     networks:

@@ -1,6 +1,7 @@
 # Heaven Bakers - Project Structure
 
 ## Overview
+
 This document describes the organization of the Heaven Bakers POS system project.
 
 ## Directory Structure
@@ -28,7 +29,6 @@ Heaven_bakers/
 │   ├── database_connection_guide.md
 │   ├── DOCKER.md
 │   ├── DUPLICATE_BARCODE_GUIDE.md
-│   ├── NGINX_WINDOWS_SETUP.md
 │   ├── QUICK_START_GUIDE.md
 │   ├── RBAC_DOCUMENTATION.md
 │   ├── README_DOCKER_SETUP.md
@@ -56,7 +56,6 @@ Heaven_bakers/
 │   └── restore_db.sql
 │
 ├── docker-compose.yml         # Docker services configuration
-├── nginx-reverse-proxy.conf   # Nginx configuration
 ├── package.json              # Root dependencies (for utility scripts)
 ├── .env.docker               # Docker environment variables
 └── README.md                 # Main project documentation
@@ -65,25 +64,31 @@ Heaven_bakers/
 ## Key Files
 
 ### Configuration Files
+
 - `docker-compose.yml` - Docker Compose configuration for running the entire stack
-- `nginx-reverse-proxy.conf` - Nginx reverse proxy configuration
 - `.env.docker` - Environment variables for Docker containers
 - `.gitignore` - Git ignore patterns
 
 ### Documentation (docs/)
+
 All documentation has been organized in the `docs/` directory for easy access:
+
 - Quick start guides for getting started
-- Setup guides for Docker, PostgreSQL, and Nginx
+- Setup guides for Docker and PostgreSQL
 - Feature documentation for barcodes, RBAC, and WhatsApp integration
 
 ### Scripts (scripts/)
+
 Utility scripts for database operations and maintenance:
+
 - Barcode generation and migration scripts
 - Database testing and connection verification
 - Data export utilities
 
 ### SQL (sql/)
+
 Database scripts and queries:
+
 - Schema migrations
 - Database state checks
 - Data restoration scripts
@@ -91,11 +96,13 @@ Database scripts and queries:
 ## Running the Project
 
 ### Using Docker (Recommended)
+
 ```bash
 docker-compose up -d
 ```
 
 ### Development Mode
+
 ```bash
 # Backend
 cd backend
