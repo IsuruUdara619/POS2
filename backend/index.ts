@@ -478,7 +478,7 @@ async function init() {
       await pool.query(`ALTER TABLE purchase_items ADD COLUMN IF NOT EXISTS selling_price NUMERIC(10,2)`);
       await pool.query(`UPDATE purchase_items SET remaining_qty = qty WHERE remaining_qty IS NULL`);
       console.log('✅ Database created and tables initialized');
-    } else {
+    } catch (e) {
       console.error('❌ Unexpected database error:', e);
       throw e;
     }
@@ -507,16 +507,41 @@ async function init() {
   console.log('✅ Backend initialization complete');
 }
 
-init().then(() => {
-  app.listen(port, '0.0.0.0', () => { 
-    console.log(`✅ Server listening on port ${port}`);
-    console.log(`🚀 Backend server ready`);
-  });
-}).catch((e) => {
-  console.error('❌ Backend initialization failed:', e);
-  console.error('Stack trace:', e.stack);
-  // Still try to start the server but log the error prominently
-  app.listen(port, '0.0.0.0', () => { 
-    console.log(`⚠️  Server started on port ${port} but initialization had errors`);
+// Health check endpoint
+let isReady = false;
+let initError: Error | null = null;
+
+app.get('/health', (req, res) => {
+  if (initError) {
+    return res.status(500).json({ 
+      status: 'error', 
+      message: 'Backend initialization failed', 
+      error: initError.message 
+    });
+  }
+  if (!isReady) {
+    return res.status(503).json({ 
+      status: 'initializing', 
+      message: 'Backend is starting up...' 
+    });
+  }
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Start server immediately
+const server = app.listen(port, '0.0.0.0', () => { 
+  console.log(`✅ Server listening on port ${port}`);
+  console.log(`🚀 Backend server starting...`);
+  
+  // Run initialization in background
+  init().then(() => {
+    isReady = true;
+    console.log('✨ System fully operational');
+  }).catch((e) => {
+    isReady = false;
+    initError = e;
+    console.error('❌ Backend initialization failed:', e);
+    console.error('Stack trace:', e.stack);
+    // Do NOT exit process, keep server alive for logs/health check
   });
 });
