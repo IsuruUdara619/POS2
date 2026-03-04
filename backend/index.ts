@@ -33,10 +33,37 @@ app.use((req, res, next) => {
   next();
 });
 
+// Configure CORS
+const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
 app.use(cors({
-  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow if explicitly listed or if wildcard is set
+    if (allowedOrigins.includes('*') || allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    
+    // Allow all Railway subdomains and localhost for convenience
+    if (origin.endsWith('.railway.app') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    console.log('⚠️ Blocked by CORS:', origin);
+    // For debugging, we might want to allow it anyway but log it. 
+    // Uncomment the next line to be permissive during debug
+    // return callback(null, true);
+    
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+  },
   credentials: true
 }));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors());
+
 app.use(express.json());
 
 // Add request logging middleware
@@ -71,6 +98,12 @@ if (fs.existsSync(frontendPath)) {
       return next();
     }
     res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+} else {
+  // Backend-only mode
+  console.log('📦 Frontend not found, running in backend-only mode');
+  app.get('/', (req, res) => {
+    res.status(200).send('Backend is running. API is available at /api');
   });
 }
 
