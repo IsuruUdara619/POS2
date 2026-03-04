@@ -32,8 +32,8 @@ COPY --from=builder /app/dist /app/dist
 # Set working directory
 WORKDIR /app
 
-# Expose port 3000
+# Expose port (default 3000, but Railway will override via PORT env)
 EXPOSE 3000
 
-# Start serve
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Start serve using the PORT environment variable if available, otherwise default to 3000
+CMD serve -s dist -l tcp://0.0.0.0:${PORT:-3000}
