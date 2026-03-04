@@ -25,7 +25,14 @@ import path from 'path';
 import fs from 'fs';
 
 const app = express();
-
+app.use(cors({
+  origin: [
+    'https://pos2.up.railway.app',   // or whatever your frontend domain is
+    'https://pos-frontend.up.railway.app', // Actual frontend URL from logs
+    'http://localhost:5173'           // for local dev
+  ],
+  credentials: true
+}));
 // Manual CORS headers - MUST BE FIRST middleware
 app.use((req, res, next) => {
   const origin = req.headers.origin;
