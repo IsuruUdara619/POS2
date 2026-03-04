@@ -1,0 +1,92 @@
+
+========================================
+BloomSwiftPOS Electron Log
+========================================
+Start Time: 2026-02-19T05:45:10.586Z
+OS: win32 10.0.26100
+Arch: x64
+Node Version: v18.18.2
+Electron Version: 28.3.3
+User: hp
+Home: C:\Users\hp
+========================================
+
+[2026-02-19T05:45:11.686Z] [ℹ️  INFO] ========================================
+[2026-02-19T05:45:11.687Z] [ℹ️  INFO] BloomSwiftPOS Starting...
+[2026-02-19T05:45:11.687Z] [ℹ️  INFO] ========================================
+[2026-02-19T05:45:11.688Z] [ℹ️  INFO] Diagnostic: Electron
+{
+  "status": "success",
+  "detail": "Electron initialized"
+}
+[2026-02-19T05:45:11.691Z] [ℹ️  INFO] Diagnostic: Configuration
+{
+  "status": "loading",
+  "detail": "Loading configuration..."
+}
+[2026-02-19T05:45:11.694Z] [ℹ️  INFO] Configuration loaded
+{
+  "dbUrl": "postgres://postgres:postgres@localhost:5432/Heaven_Bakers",
+  "hasJwt": true
+}
+[2026-02-19T05:45:11.694Z] [ℹ️  INFO] Diagnostic: Configuration
+{
+  "status": "success",
+  "detail": "Configuration loaded"
+}
+[2026-02-19T05:45:11.695Z] [ℹ️  INFO] Creating diagnostic window
+[2026-02-19T05:45:12.011Z] [ℹ️  INFO] Starting backend server...
+[2026-02-19T05:45:12.011Z] [ℹ️  INFO] Diagnostic: Backend Server
+{
+  "status": "loading",
+  "detail": "Initializing backend..."
+}
+[2026-02-19T05:45:12.012Z] [ℹ️  INFO] Checking for stale compiled JavaScript files...
+[2026-02-19T05:45:12.013Z] [ℹ️  INFO] No stale files found - environment is clean
+[2026-02-19T05:45:12.014Z] [ℹ️  INFO] Backend path:
+{
+  "backendPath": "E:\\Weerasingha_Hardware\\backend",
+  "isPackaged": false
+}
+[2026-02-19T05:45:12.015Z] [ℹ️  INFO] Environment configured
+{
+  "PORT": 5000,
+  "DB_CONFIGURED": true,
+  "JWT_CONFIGURED": true
+}
+[2026-02-19T05:45:12.016Z] [ℹ️  INFO] Diagnostic: Database Connection
+{
+  "status": "loading",
+  "detail": "Connecting to database..."
+}
+[2026-02-19T05:45:12.016Z] [ℹ️  INFO] Loading development backend with ts-node
+[2026-02-19T05:45:14.002Z] [ℹ️  INFO] Backend server module loaded on port 5000
+[2026-02-19T05:45:17.022Z] [ℹ️  INFO] Diagnostic: Backend Health
+{
+  "status": "loading",
+  "detail": "Checking backend health..."
+}
+[2026-02-19T05:45:17.047Z] [ℹ️  INFO] Diagnostic: Backend Health
+{
+  "status": "success",
+  "detail": "Backend is responding"
+}
+[2026-02-19T05:45:17.049Z] [ℹ️  INFO] Diagnostic: Frontend Assets
+{
+  "status": "loading",
+  "detail": "Loading frontend..."
+}
+[2026-02-19T05:45:17.050Z] [ℹ️  INFO] Creating main window
+[2026-02-19T05:45:17.050Z] [ℹ️  INFO] Diagnostic: Electron Window
+{
+  "status": "loading",
+  "detail": "Creating application window..."
+}
+[2026-02-19T05:45:17.105Z] [ℹ️  INFO] Loading development URL: http://localhost:5173
+[2026-02-19T05:45:17.119Z] [ℹ️  INFO] Application startup sequence completed
+[2026-02-19T05:45:18.039Z] [ℹ️  INFO] Main window ready to show
+[2026-02-19T05:45:18.039Z] [ℹ️  INFO] Diagnostic: Electron Window
+{
+  "status": "success",
+  "detail": "Application window created"
+}

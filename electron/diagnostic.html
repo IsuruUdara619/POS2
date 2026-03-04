@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloomSwiftPOS - Startup Diagnostics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .status-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .status-item.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .status-item.loading {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .status-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .status-text {
+            flex: 1;
+        }
+
+        .status-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .status-detail {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .error-box {
+            background: #fff;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        .error-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #dc3545;
+            margin-bottom: 12px;
+        }
+
+        .error-message {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #333;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .error-stack {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #666;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .error-stack.show {
+            display: block;
+        }
+
+        .toggle-stack {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 0;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .log-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #004085;
+        }
+
+        .log-path {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 BloomSwiftPOS Diagnostics</h1>
+            <p>Analyzing application startup...</p>
+        </div>
+
+        <div class="content">
+            <div id="status-list">
+                <!-- Status items will be inserted here -->
+            </div>
+
+            <div id="error-box" class="error-box">
+                <div class="error-title">❌ Critical Error Detected</div>
+                <div id="error-content"></div>
+            </div>
+
+            <div class="buttons">
+                <button id="retry-btn" class="btn btn-primary">
+                    <span>🔄</span> Retry Startup
+                </button>
+                <button id="copy-btn" class="btn btn-secondary">
+                    <span>📋</span> Copy Error Details
+                </button>
+                <button id="save-btn" class="btn btn-secondary">
+                    <span>💾</span> Save Diagnostic Report
+                </button>
+                <button id="open-logs-btn" class="btn btn-secondary">
+                    <span>📁</span> Open Log Folder
+                </button>
+            </div>
+
+            <div class="log-info">
+                <strong>📝 Log Location:</strong>
+                <div class="log-path" id="log-path">Loading...</div>
+            </div>
+
+            <div class="timestamp" id="timestamp"></div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        let diagnosticData = null;
+
+        // Update timestamp
+        document.getElementById('timestamp').textContent = `Generated: ${new Date().toLocaleString()}`;
+
+        // Request diagnostic data
+        ipcRenderer.invoke('get-diagnostic-data').then(data => {
+            diagnosticData = data;
+            renderDiagnostics(data);
+        });
+
+        function renderDiagnostics(data) {
+            const statusList = document.getElementById('status-list');
+            const errorBox = document.getElementById('error-box');
+            const errorContent = document.getElementById('error-content');
+            const logPath = document.getElementById('log-path');
+
+            // Clear existing content
+            statusList.innerHTML = '';
+
+            // Render each status
+            data.statuses.forEach(status => {
+                const item = document.createElement('div');
+                item.className = `status-item ${status.status}`;
+
+                let icon = '⏳';
+                if (status.status === 'success') icon = '✅';
+                if (status.status === 'error') icon = '❌';
+                if (status.status === 'loading') icon = '<div class="spinner"></div>';
+
+                item.innerHTML = `
+                    <div class="status-icon">${icon}</div>
+                    <div class="status-text">
+                        <div class="status-title">${status.title}</div>
+                        ${status.detail ? `<div class="status-detail">${status.detail}</div>` : ''}
+                    </div>
+                `;
+
+                statusList.appendChild(item);
+            });
+
+            // Show error if present
+            if (data.error) {
+                errorBox.classList.add('show');
+                
+                let errorHtml = `
+                    <div class="error-message">${escapeHtml(data.error.message)}</div>
+                `;
+
+                if (data.error.stack) {
+                    errorHtml += `
+                        <button class="toggle-stack" onclick="toggleStack()">
+                            Show Stack Trace ▼
+                        </button>
+                        <div id="error-stack" class="error-stack">${escapeHtml(data.error.stack)}</div>
+                    `;
+                }
+
+                if (data.error.context) {
+                    errorHtml += `
+                        <div class="error-message" style="margin-top: 10px;">
+                            <strong>Additional Context:</strong><br>
+                            ${escapeHtml(JSON.stringify(data.error.context, null, 2))}
+                        </div>
+                    `;
+                }
+
+                errorContent.innerHTML = errorHtml;
+            }
+
+            // Update log path
+            if (data.logPath) {
+                logPath.textContent = data.logPath;
+            }
+        }
+
+        function toggleStack() {
+            const stack = document.getElementById('error-stack');
+            const btn = document.querySelector('.toggle-stack');
+            if (stack.classList.contains('show')) {
+                stack.classList.remove('show');
+                btn.textContent = 'Show Stack Trace ▼';
+            } else {
+                stack.classList.add('show');
+                btn.textContent = 'Hide Stack Trace ▲';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Button handlers
+        document.getElementById('retry-btn').addEventListener('click', () => {
+            ipcRenderer.send('retry-startup');
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', async () => {
+            const report = generateReport();
+            await navigator.clipboard.writeText(report);
+            alert('Error details copied to clipboard!');
+        });
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const report = generateReport();
+            const result = await ipcRenderer.invoke('save-diagnostic-report', report);
+            if (result.success) {
+                alert(`Diagnostic report saved to:\n${result.path}`);
+            } else {
+                alert('Failed to save report: ' + result.error);
+            }
+        });
+
+        document.getElementById('open-logs-btn').addEventListener('click', () => {
+            ipcRenderer.send('open-logs-folder');
+        });
+
+        function generateReport() {
+            if (!diagnosticData) return 'No diagnostic data available';
+
+            let report = '========================================\n';
+            report += 'BloomSwiftPOS Diagnostic Report\n';
+            report += '========================================\n';
+            report += `Generated: ${new Date().toISOString()}\n`;
+            report += `OS: ${diagnosticData.system?.os || 'Unknown'}\n`;
+            report += `Node: ${diagnosticData.system?.node || 'Unknown'}\n`;
+            report += `Electron: ${diagnosticData.system?.electron || 'Unknown'}\n`;
+            report += '========================================\n\n';
+
+            report += 'STARTUP STATUS:\n';
+            report += '----------------------------------------\n';
+            diagnosticData.statuses.forEach(status => {
+                const icon = status.status === 'success' ? '✅' : 
+                            status.status === 'error' ? '❌' : '⏳';
+                report += `${icon} ${status.title}\n`;
+                if (status.detail) {
+                    report += `   ${status.detail}\n`;
+                }
+            });
+
+            if (diagnosticData.error) {
+                report += '\n========================================\n';
+                report += 'ERROR DETAILS:\n';
+                report += '========================================\n';
+                report += diagnosticData.error.message + '\n\n';
+                
+                if (diagnosticData.error.stack) {
+                    report += 'Stack Trace:\n';
+                    report += diagnosticData.error.stack + '\n\n';
+                }
+
+                if (diagnosticData.error.context) {
+                    report += 'Context:\n';
+                    report += JSON.stringify(diagnosticData.error.context, null, 2) + '\n';
+                }
+            }
+
+            if (diagnosticData.logs && diagnosticData.logs.length > 0) {
+                report += '\n========================================\n';
+                report += 'RECENT LOGS:\n';
+                report += '========================================\n';
+                diagnosticData.logs.forEach(log => {
+                    report += `[${log.timestamp}] [${log.level.toUpperCase()}] ${log.message}\n`;
+                    if (log.context) {
+                        report += `   ${JSON.stringify(log.context)}\n`;
+                    }
+                });
+            }
+
+            return report;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: heaven_bakers_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      # Connect to host machine's PostgreSQL using host.docker.internal
+      DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/Heaven_Bakers
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+    extra_hosts:
+      # This allows the container to access the host machine's services
+      - "host.docker.internal:host-gateway"
+    networks:
+      - heaven_network
+    volumes:
+      # Mount for WhatsApp session data persistence
+      - whatsapp_data:/app/.wwebjs_auth
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: heaven_bakers_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - heaven_network
+
+networks:
+  heaven_network:
+    driver: bridge
+
+volumes:
+  whatsapp_data:
+    driver: local

@@ -1,0 +1,56 @@
+# Node modules
+node_modules
+npm-debug.log
+
+# Environment files
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+README.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*.test.ts
+*.test.tsx
+*.test.js
+*.test.jsx
+test/
+tests/
+__tests__
+
+# Build artifacts (except we need to build in Docker)
+dist
+build
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Coverage
+coverage
+.nyc_output

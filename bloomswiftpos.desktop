@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=BloomSwiftPOS
+GenericName=POS System
+Comment=Point of Sale System for retail management
+Exec=/opt/BloomSwiftPOS/bloomswiftpos %U
+Icon=bloomswiftpos
+Terminal=false
+Categories=Office;Finance;
+Keywords=pos;sales;inventory;retail;
+StartupWMClass=BloomSwiftPOS
+StartupNotify=true
+MimeType=application/x-bloomswift-pos;
+
+# This desktop file can be used to create desktop shortcuts
+# After installing the .deb package, copy this file to:
+# - System-wide: /usr/share/applications/
+# - User desktop: ~/Desktop/ (make executable with: chmod +x bloomswiftpos.desktop)
+# - User menu: ~/.local/share/applications/

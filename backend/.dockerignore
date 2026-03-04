@@ -1,0 +1,49 @@
+# Node modules
+node_modules
+npm-debug.log
+
+# Environment files (use docker-compose env vars)
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+README.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*.test.ts
+*.test.js
+test/
+tests/
+
+# Build artifacts
+dist
+build
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
