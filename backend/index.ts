@@ -57,16 +57,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Use standard CORS middleware as backup (after manual headers)
-app.use(cors({
-  origin: [
-    'https://pos2.up.railway.app',
-    'https://pos-frontend.up.railway.app',
-    'http://localhost:5173'
-  ],
-  credentials: true
-}));
-
 app.use(express.json());
 
 // Add request logging middleware
