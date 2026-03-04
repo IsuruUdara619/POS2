@@ -26,6 +26,30 @@ import fs from 'fs';
 
 const app = express();
 
+// Manual CORS headers - MUST BE FIRST middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  // Allow all origins that ask (reflect origin)
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    // Fallback for non-browser clients or when origin is missing
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight immediately
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
 // Debug middleware to log origin
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -33,33 +57,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configure CORS
-// simplified for debugging: allow all origins that ask (reflect origin)
+// Use standard CORS middleware as backup
 app.use(cors({
-  origin: true, 
-  credentials: true
-}));
-
-// Enable pre-flight requests for all routes
-app.options('*', cors({
   origin: true,
   credentials: true
 }));
-
-// Manual CORS headers for extra safety (in case middleware fails/is bypassed)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
 
 app.use(express.json());
 
