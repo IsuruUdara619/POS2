@@ -482,7 +482,7 @@ async function init() {
 }
 
 init().then(() => {
-  app.listen(port, () => { 
+  app.listen(port, '0.0.0.0', () => { 
     console.log(`✅ Server listening on port ${port}`);
     console.log(`🚀 Backend server ready`);
   });
@@ -490,7 +490,7 @@ init().then(() => {
   console.error('❌ Backend initialization failed:', e);
   console.error('Stack trace:', e.stack);
   // Still try to start the server but log the error prominently
-  app.listen(port, () => { 
+  app.listen(port, '0.0.0.0', () => { 
     console.log(`⚠️  Server started on port ${port} but initialization had errors`);
   });
 });
