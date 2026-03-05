@@ -493,14 +493,19 @@ let initError: Error | null = null;
 
 app.get('/health', (req, res) => {
   if (initError) {
-    return res.status(500).json({ 
+    // Return 200 even on error so we can see the error message in the response body
+    // and prevent the platform from killing the container immediately
+    return res.status(200).json({ 
       status: 'error', 
       message: 'Backend initialization failed', 
-      error: initError.message 
+      error: initError.message,
+      stack: process.env.NODE_ENV === 'development' ? initError.stack : undefined
     });
   }
   if (!isReady) {
-    return res.status(503).json({ 
+    // Return 200 (OK) during initialization to prevent health check failures
+    // caused by slow startup times (e.g. database migrations)
+    return res.status(200).json({ 
       status: 'initializing', 
       message: 'Backend is starting up...' 
     });

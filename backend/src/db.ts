@@ -14,6 +14,7 @@ const getDatabaseConfig = () => {
         database: url.pathname.slice(1), // Remove leading '/'
         user: url.username,
         password: url.password,
+        connectionTimeoutMillis: 5000, // Fail fast if DB is unreachable
       };
     }
   } catch (error) {
