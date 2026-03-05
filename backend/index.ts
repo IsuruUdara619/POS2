@@ -25,36 +25,28 @@ import path from 'path';
 import fs from 'fs';
 
 const app = express();
-
+// Replace the manual CORS block with this:
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    return callback(null, origin); // reflect all origins
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+}));
 // Manual CORS headers - MUST BE FIRST middleware
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Allow all origins that ask (reflect origin)
-  if (origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    // Fallback for non-browser clients or when origin is missing
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-  
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight immediately
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
-
-// Debug middleware to log origin
+// Debug middleware to log origin and headers
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log('Origin:', req.headers.origin);
   next();
+});
+
+// Root route to ensure backend is reachable
+app.get('/', (req, res) => {
+  res.status(200).send('Backend is running. API is available at /api');
 });
 
 app.use(express.json());
@@ -80,25 +72,13 @@ app.use('/api/diagnostics', diagnosticsRouter);
 app.use('/api/whatsapp', whatsappRouter);
 
 // Serve frontend static files
-const frontendPath = path.resolve(process.cwd(), '../frontend/dist');
-if (fs.existsSync(frontendPath)) {
-  console.log('📦 Serving frontend from:', frontendPath);
-  app.use(express.static(frontendPath));
-  
-  // SPA fallback
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-    res.sendFile(path.join(frontendPath, 'index.html'));
-  });
-} else {
-  // Backend-only mode
-  console.log('📦 Frontend not found, running in backend-only mode');
-  app.get('/', (req, res) => {
-    res.status(200).send('Backend is running. API is available at /api');
-  });
-}
+// Backend-only mode
+console.log('📦 Frontend not found, running in backend-only mode');
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found' });
+});
 
 // Add error handling middleware (must be last)
 app.use(errorLogger.errorHandler());

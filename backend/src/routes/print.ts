@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import PDFDocument from 'pdfkit';
-import { createCanvas } from 'canvas';
 import JsBarcode from 'jsbarcode';
 import fs from 'fs';
 import path from 'path';
@@ -11,6 +10,14 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { pool } from '../db';
 import { ESCPOSPrinter, findPrinterDevice } from '../utils/escposPrinter';
+
+// Lazy load canvas to prevent startup crashes if dependencies are missing
+let createCanvas: any;
+try {
+  ({ createCanvas } = require('canvas'));
+} catch (e) {
+  console.warn('⚠️ Canvas module not available. Barcode generation may fail:', e.message);
+}
 
 const execPromise = promisify(exec);
 const router = Router();
@@ -279,6 +286,10 @@ router.post('/barcode', async (req, res) => {
     console.log('Using temp directory:', tempDir);
 
     // Temp directory is already created by getTempDirectory()
+
+    if (!createCanvas) {
+      throw new Error('Canvas module is not available. Cannot generate barcode image. Please check server dependencies.');
+    }
 
     // Generate barcode image - horizontal, scannable
     const canvas = createCanvas(600, 100);
